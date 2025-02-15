@@ -5,14 +5,17 @@ import '../../business_logic/bloc/speech_bloc.dart';
 import '../widgets/speak_button.dart';
 
 class HomeScreen extends StatelessWidget {
+//   final List<String> targetWords = [
+//   "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+//   "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+//   "الرَّحْمَٰنِ الرَّحِيمِ",
+//   "مَالِكِ يَوْمِ الدِّينِ",
+//   "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+//   "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+//   "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+// ];
   final List<String> targetWords = [
-  "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
-  "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
-  "الرَّحْمَٰنِ الرَّحِيمِ",
-  "مَالِكِ يَوْمِ الدِّينِ",
-  "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
-  "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
-  "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+  "Hello Flutter",
 ];
 
   @override
@@ -29,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                recognizedWords = state.recognizedWords;
             }
 
-            List<String> words = targetWords;
+            List<String> words = targetWords.expand((sentence) => sentence.split(' ')).toList();
             List<String> recognizedList = recognizedWords.split(' ');
 
             return Column(
@@ -54,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                   }),
                 ),
                 SizedBox(height: 20),
-                SpeakButton(targetWords: targetWords), // **Button stays here**
+                SpeakButton(targetWords: words), // **Button stays here**
                 SizedBox(height: 20),
 
                 // Recognized Words

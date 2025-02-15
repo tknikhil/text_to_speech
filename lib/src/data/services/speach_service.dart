@@ -48,7 +48,7 @@ class SpeechService {
       },
       listenFor: Duration(minutes: 10), // Keep listening for a long time
       pauseFor: Duration(seconds: 10), // Allow pauses in speech
-      localeId: "ar-SA",
+      localeId: "en-US",
     );
   }
 
