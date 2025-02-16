@@ -1,4 +1,3 @@
-
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
 
@@ -48,7 +47,7 @@ class SpeechService {
       },
       listenFor: Duration(minutes: 10), // Keep listening for a long time
       pauseFor: Duration(seconds: 10), // Allow pauses in speech
-      localeId: "en-US",
+      localeId: "ar-SA",
     );
   }
 
