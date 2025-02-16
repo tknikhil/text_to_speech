@@ -1,23 +1,54 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../business_logic/bloc/speach_state.dart';
 import '../../business_logic/bloc/speech_bloc.dart';
 import '../widgets/speak_button.dart';
+import 'package:http/http.dart' as http;
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // final List<String> targetWords = [
+  //   "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+  //   "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+  //   "الرَّحْمَٰنِ الرَّحِيمِ",
+  //   "مَالِكِ يَوْمِ الدِّينِ",
+  //   "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+  //   "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+  //   "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+  // ];
+  List<String> targetWords = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSurahFatiha();
+  }
+
 //   final List<String> targetWords = [
-//   "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
-//   "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
-//   "الرَّحْمَٰنِ الرَّحِيمِ",
-//   "مَالِكِ يَوْمِ الدِّينِ",
-//   "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
-//   "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
-//   "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
-// ];
-  final List<String> targetWords = [
-  "Hello Flutter",
-];
+  Future<void> fetchSurahFatiha() async {
+    try {
+      final response =
+          await http.get(Uri.parse('https://api.alquran.cloud/v1/surah/1'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          targetWords = (data['data']['ayahs'] as List)
+              .map((ayah) => ayah['text'].toString())
+              .toList();
+        });
+      }
+    } catch (error) {
+      print('Error fetching Surah Al-Fatiha: $error');
+    }
+  }
 
+  //   @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,14 +57,15 @@ class HomeScreen extends StatelessWidget {
         child: BlocBuilder<SpeechBloc, SpeechState>(
           builder: (context, state) {
             List<bool> wordMatches = [];
-             String recognizedWords = "";
+            String recognizedWords = "";
             if (state is SpeechSuccess) {
               wordMatches = state.wordMatches;
-               recognizedWords = state.recognizedWords;
+              recognizedWords = state.recognizedWords;
             }
 
-            List<String> words = targetWords.expand((sentence) => sentence.split(' ')).toList();
-            List<String> recognizedList = recognizedWords.split(' ');
+            List<String> words =
+                targetWords.expand((sentence) => sentence.split(' ')).toList();
+            // List<String> recognizedList = recognizedWords.split(' ');
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -43,7 +75,8 @@ class HomeScreen extends StatelessWidget {
                   children: List.generate(words.length, (index) {
                     Color textColor = Colors.black; // Default color
                     if (state is SpeechSuccess) {
-                      textColor = wordMatches[index] ? Colors.green : Colors.red;
+                      textColor =
+                          wordMatches[index] ? Colors.green : Colors.red;
                     }
 
                     return Text(
@@ -62,7 +95,7 @@ class HomeScreen extends StatelessWidget {
 
                 // Recognized Words
                 Text(
-                  "You said: ${recognizedWords.isNotEmpty ? recognizedWords : "..." }",
+                  "You said: ${recognizedWords.isNotEmpty ? recognizedWords : "..."}",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
